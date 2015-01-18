@@ -19,9 +19,25 @@ public class Fitness
         this.target = finalResult;
     }
     
-    public int testFitness(Individual offSpring)
+    public int testFitness(char[] gene)
     {
-        return 0; // TODO finish this.
+        // paranoid checking
+        if (gene.length != this.target.length())
+        {
+            throw new IllegalArgumentException("huh? the gene length differs from the target string");
+        }
+        // The fitness of two strings can be measured by a hamming distance of 
+        // the differences between the two strings. If the two strings are equal
+        // the fitness value is 0.
+        int fitness = 0; 
+        for (int i = 0; i < gene.length; i++)
+        {
+            System.out.println(">>" + (int)gene[i] + "<<" + (int)this.target.charAt(i));
+            System.out.println(">>" + (double)((int)gene[i] - (int)this.target.charAt(i)) + "<<");
+            System.out.println(">>" + Math.pow((double)((int)gene[i] - (int)this.target.charAt(i)), 2.0) + "<<");
+            fitness += Math.pow((double)((int)gene[i] - (int)this.target.charAt(i)), 2.0);
+        }
+        return (int)fitness; // TODO finish this.
     }
     
     @Override

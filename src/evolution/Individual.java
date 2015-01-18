@@ -7,7 +7,6 @@
 package evolution;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 /**
  * The physical individual that will reproduce with another individual.
@@ -15,6 +14,8 @@ import java.util.Random;
  */
 public class Individual
 {
+
+    
     public class Randomizer
     {
         private final String alphabet; 
@@ -23,7 +24,7 @@ public class Individual
         
         public Randomizer()
         {
-            this.alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%&*";
+            this.alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !@#$%&*";
             this.N    = alphabet.length();
             this.r    = new SecureRandom();
         }
@@ -89,6 +90,8 @@ public class Individual
     
     private char[] gene;
     private Randomizer randomizer;
+    private int rank;
+    
     /**
      * Creates individual with a pre-defined gene length.
      * @param geneLength 
@@ -103,6 +106,46 @@ public class Individual
         // fill the gene with random nucleotides.
         this.randomizer = new Randomizer();
         this.randomizer.initGeneSequence(gene);
+    }
+    
+    /**
+     * Creates an individual with a given gene sequence. Equivalent to a child
+     * being born with the genes passed to it by it's parents.
+     * @param gene 
+     */
+    public Individual(char[] gene)
+    {
+        for (int i = 0; i < gene.length; i++)
+        {
+            this.gene[i] = gene[i];
+        }
+    }
+    
+    /**
+     * Returns the fitness of this individual.
+     * @return fitness score within the population.
+     */
+    public int getRank()
+    {
+        return rank;
+    }
+
+    /**
+     * Sets the individual's ranking, or fitness score within the population.
+     * @param rank fitness score
+     */
+    public void setRank(int rank)
+    {
+        this.rank = rank;
+    }
+    
+    /** 
+     * Gets the gene sequence.
+     * @return gene sequence of char[].
+     */
+    public char[] getGene()
+    {
+        return gene;
     }
     
     public Individual mate(Individual mate)
