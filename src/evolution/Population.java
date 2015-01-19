@@ -9,9 +9,8 @@ package evolution;
 import java.security.SecureRandom;
 
 /**
- * The object is the Gene Pool, orandomGenerator prandomGeneratoroperandomGeneratorly the population. Within it arandomGeneratore a 
- 'n' individuals, all of which randomGeneratorecombine to prandomGeneratoroduce offsprandomGeneratoring. Once the fitness
- of the offsprandomGeneratoring arandomGeneratore tested they arandomGeneratore randomGeneratoranked.
+ * The object is the Gene Pool, or the population. Within it are individuals each
+ * of which is tested for fitness against the target string.
  * @author andrandomGeneratorew
  */
 public class Population
