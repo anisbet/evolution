@@ -20,7 +20,9 @@ public class Evolution
     public static void main(String[] args)
     {
         // 
-        Population p = new Population(20, "Hello World!".length());
+        String inputString = "Hello World!";
+        Fitness fitnessTest = new Fitness(inputString);
+        Population p = new Population(20, inputString.length(), fitnessTest);
         System.out.println(p.toString());
         Individual individual = p.get(0);
         System.out.println(">>" + individual.toString());

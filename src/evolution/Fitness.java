@@ -32,9 +32,7 @@ public class Fitness
         int fitness = 0; 
         for (int i = 0; i < gene.length; i++)
         {
-            System.out.println(">>" + (int)gene[i] + "<<" + (int)this.target.charAt(i));
-            System.out.println(">>" + (double)((int)gene[i] - (int)this.target.charAt(i)) + "<<");
-            System.out.println(">>" + Math.pow((double)((int)gene[i] - (int)this.target.charAt(i)), 2.0) + "<<");
+            // To excentuate the difference we compute the square of the differences in the sequence.
             fitness += Math.pow((double)((int)gene[i] - (int)this.target.charAt(i)), 2.0);
         }
         return (int)fitness; // TODO finish this.

@@ -19,7 +19,7 @@ public class Population
     private Individual[] population;
     private SecureRandom randomGenerator;
     
-    public Population(int poolSize, int geneLength)
+    public Population(int poolSize, int geneLength, Fitness fitness)
     {
         this.population      = new Individual[poolSize];
         this.randomGenerator = new SecureRandom();
@@ -27,6 +27,7 @@ public class Population
         {
             this.population[i] = new Individual(geneLength);
         }
+        this.computeFitness(fitness);
     }
     
     /**
@@ -81,14 +82,32 @@ public class Population
         }
     }
     
+    public void computeFitness(Fitness fitness)
+    {
+        for (int i = 0; i < this.population.length; i++)
+        {
+            Individual individual = this.population[i];
+            if (individual != null)
+            {
+                individual.setRank(fitness.testFitness(individual.getGene()));
+            }
+        }
+    }
+    
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Ranking:\n");
         for (int i = 0; i < population.length; i++)
         {
-            sb.append(i).append(") ").append(this.population[i].toString()).append("\n");
+            if (this.population[i] != null)
+            {
+                sb.append(i).append(") ").append(this.population[i].toString()).append("\n");
+            }
+            else
+            {
+                sb.append(i).append(") ").append("<null>").append("\n");
+            }
         }
         return sb.toString();
     }

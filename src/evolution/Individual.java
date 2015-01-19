@@ -115,6 +115,8 @@ public class Individual
      */
     public Individual(char[] gene)
     {
+        this.gene = new char[gene.length];
+        this.randomizer = new Randomizer();
         for (int i = 0; i < gene.length; i++)
         {
             this.gene[i] = gene[i];
@@ -167,6 +169,7 @@ public class Individual
         {
             sb.append(this.gene[i]);
         }
+        sb.append(" => ").append(this.rank);
         return sb.toString();
     }
 }
