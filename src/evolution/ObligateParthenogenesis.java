@@ -51,5 +51,4 @@ public class ObligateParthenogenesis implements RecombinationStrategy
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }
