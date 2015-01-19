@@ -29,10 +29,13 @@ public class CrossOver implements RecombinationStrategy
         int length = dad.length;
         char[] myNewGeneSequence = new char[length];
         SecureRandom sRandom = new SecureRandom();
-        int site = sRandom.nextInt(length -2) + 1; // this select from 0 to last chromosone otherwise child might inherit all genes from one parent.
+        // Returns a pseudorandom, uniformly distributed int value between 0 
+        // (inclusive) and the specified value (exclusive), drawn from this 
+        // random number generator's sequence.
+        int site = sRandom.nextInt(length);
         for (int i = 0; i < length; i++)
         {
-            if (i < site)
+            if (i <= site)
             {
                 myNewGeneSequence[i] = mom[i];
             }
