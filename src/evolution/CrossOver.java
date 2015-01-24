@@ -38,7 +38,7 @@ public class CrossOver implements RecombinationStrategy
     @Override
     public Individual reproduce(Individual[] mates)
     {
-        if (mates.length != 2)
+        if (mates.length < 2)
         {
             throw new IllegalArgumentException("cross over recombination requires a 2 mates.");
         }

@@ -38,16 +38,27 @@ public class Evolution
     public static void main(String[] args)
     {
         // 
-        String inputString = "Hello World!";
-        Fitness fitnessTest = new Fitness(inputString);
-        Population p = new Population(20, inputString.length(), fitnessTest);
-        System.out.println(p.toString());
-        Individual individual = p.get(0);
-        System.out.println(">>" + individual.toString());
-        for (int i = 0; i < 5; i++)
+        String inputString                       = "Hello World!";
+        Fitness fitnessTest                      = new Fitness(inputString);
+        RecombinationStrategy reproductionMethod = new CrossOver();
+        MateSelectionStrategy mateSelection      = new DominantPair();
+        Population population = new Population(
+                20, 
+                inputString.length(), 
+                fitnessTest, 
+                reproductionMethod,
+                mateSelection
+        );
+        System.out.println("Initial population: ");
+        System.out.println(population.toString());
+        int generationCount = 1;
+        while (! population.isOptimal())
         {
-            System.out.println(">>" + individual.mutate(1));
+            System.out.println("generation " + generationCount + " " + population.getEliteIndividual());
+            population.makeBabies();
+            generationCount++;
         }
+        System.out.println("generation " + generationCount + " " + population.getEliteIndividual());
     }
     
 }

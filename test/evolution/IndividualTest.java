@@ -29,10 +29,12 @@ public class IndividualTest
     @Test
     public void testMate()
     {
-        System.out.println("mate");
+        System.out.println("==mate==");
         Individual mate = new Individual(this.search.length());
-        Individual offSpring = this.i.mate(mate);
-        System.out.println(">>" + offSpring);
+        System.out.println(" dad>" + this.i);
+        System.out.println(" mom>" + mate);
+        Individual offSpring = this.i.mate(mate, new CrossOver());
+        System.out.println("baby>" + offSpring);
     }
 
     /**

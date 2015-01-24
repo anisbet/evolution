@@ -24,35 +24,21 @@
 
 package evolution;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
- *
- * @author andrew
+ * Asexual reproduction relies on chromosome splitting from a single parent to 
+ * produce a child with same genes with the exception of mutations that take place
+ * during mitosis.
+ * @author Andrew Nisbet
  */
-public class PopulationTest
+public class ASexual implements MateSelectionStrategy
 {
-    private Population p;
-    private Fitness fitness;
-    public PopulationTest()
-    {
-        this.fitness = new Fitness("Hello World!");
-        RecombinationStrategy strategy = new CrossOver();
-        MateSelectionStrategy mateSelection = new DominantPair();
-        this.p = new Population(20, "Hello World!".length(), fitness, strategy, mateSelection);
-    }
 
-    /**
-     * Test of cull method, of class Population.
-     */
-    @Test
-    public void testCull()
+    @Override
+    public Individual[] findMates(Population population, Individual individual)
     {
-        System.out.println("== cull ==");
-        System.out.println(this.p.toString());
-        this.p.cull(1);
-        System.out.println(this.p.toString());
+        Individual[] mate = new Individual[1];
+        mate[0] = individual;
+        return mate;
     }
-   
+    
 }

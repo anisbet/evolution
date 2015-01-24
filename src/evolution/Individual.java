@@ -32,7 +32,6 @@ import java.security.SecureRandom;
  */
 public class Individual
 {
-
     
     public class Randomizer
     {
@@ -109,6 +108,7 @@ public class Individual
     private char[] gene;
     private Randomizer randomizer;
     private int rank;
+    private boolean pairedWithAnother;
     
     /**
      * Creates individual with a pre-defined gene length.
@@ -124,6 +124,7 @@ public class Individual
         // fill the gene with random nucleotides.
         this.randomizer = new Randomizer();
         this.randomizer.initGeneSequence(gene);
+        this.pairedWithAnother = false;
     }
     
     /**
@@ -139,6 +140,7 @@ public class Individual
         {
             this.gene[i] = gene[i];
         }
+        this.pairedWithAnother = false;
     }
     
     /**
@@ -168,15 +170,42 @@ public class Individual
         return gene;
     }
     
-    public Individual mate(Individual mate)
+    /**
+     * Recombines the genes from the argument mate with this individual's.
+     * @param mate 'nuff said.
+     * @param recombinationStrategy how the parents genes are to be recombined.
+     * @return new child individual that features gene sequences from parents.
+     */
+    public Individual mate(Individual mate, RecombinationStrategy recombinationStrategy)
     {
-        return new Individual(this.gene.length);
+        Individual[] mates = new Individual[2];
+        mates[0] = this;
+        mates[1] = mate;
+        return recombinationStrategy.reproduce(mates);
     }
     
+    /**
+     * Mutates 'n' alleles at random.
+     * @param mutations
+     * @return string version of the individual with ranking.
+     */
     public String mutate(int mutations)
     {
         this.randomizer.mutate(gene, mutations);
         return this.toString();
+    }
+    
+    /**
+     * This tells the individual that they are paired with another.
+     */
+    void setSelected()
+    {
+        this.pairedWithAnother = true;
+    }
+
+    boolean isSelected()
+    {
+        return this.pairedWithAnother;
     }
     
     @Override
