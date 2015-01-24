@@ -36,33 +36,38 @@ public class CrossOver implements RecombinationStrategy
 {   
 
     @Override
-    public Individual reproduce(Individual[] mates)
+    public Individual[] reproduce(Individual[] mates)
     {
         if (mates.length < 2)
         {
             throw new IllegalArgumentException("cross over recombination requires a 2 mates.");
         }
-        char[] dad = mates[0].getGene();
-        char[] mom = mates[1].getGene();
-        int length = dad.length;
-        char[] myNewGeneSequence = new char[length];
-        SecureRandom sRandom = new SecureRandom();
-        // Returns a pseudorandom, uniformly distributed int value between 0 
-        // (inclusive) and the specified value (exclusive), drawn from this 
-        // random number generator's sequence.
-        int site = sRandom.nextInt(length);
-        for (int i = 0; i < length; i++)
+        Individual[] babies = new Individual[mates.length];
+        for (int j = 0; j < babies.length; j++)
         {
-            if (i <= site)
+            char[] dad = mates[0].getGene();
+            char[] mom = mates[1].getGene();
+            int length = dad.length;
+            char[] myNewGeneSequence = new char[length];
+            SecureRandom sRandom = new SecureRandom();
+            // Returns a pseudorandom, uniformly distributed int value between 0 
+            // (inclusive) and the specified value (exclusive), drawn from this 
+            // random number generator's sequence.
+            int site = sRandom.nextInt(length);
+            for (int i = 0; i < length; i++)
             {
-                myNewGeneSequence[i] = mom[i];
+                if (i <= site)
+                {
+                    myNewGeneSequence[i] = mom[i];
+                }
+                else
+                {
+                    myNewGeneSequence[i] = dad[i];
+                }
             }
-            else
-            {
-                myNewGeneSequence[i] = dad[i];
-            }
+            babies[j] = new Individual(myNewGeneSequence);
         }
-        return new Individual(myNewGeneSequence);
+        return babies;
     }
     
 }

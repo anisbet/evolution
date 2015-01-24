@@ -41,5 +41,5 @@ public interface RecombinationStrategy
      * the next generation.
      * @return offspring Individual.
      */
-    public Individual reproduce(Individual[] mates);
+    public Individual[] reproduce(Individual[] mates);
 }

@@ -176,16 +176,24 @@ public class Individual
      * @param recombinationStrategy how the parents genes are to be recombined.
      * @return new child individual that features gene sequences from parents.
      */
-    public Individual mate(Individual mate, RecombinationStrategy recombinationStrategy)
+    public Individual[] mate(Individual mate, RecombinationStrategy recombinationStrategy)
     {
         Individual[] mates = new Individual[2];
         mates[0] = this;
         mates[1] = mate;
-        return recombinationStrategy.reproduce(mates);
+        Individual[] babies = recombinationStrategy.reproduce(mates);
+        // if the population has any holes where an individual died, replace
+        // those members first.
+        for (int i = 0; i < babies.length; i++)
+        {
+            babies[i].mutate(2);
+        }
+        return babies;
     }
     
     /**
-     * Mutates 'n' alleles at random.
+     * Mutates 'n' alleles at random. Returns a string version of the mutation
+     * with the side effect is the gene is mutated.
      * @param mutations
      * @return string version of the individual with ranking.
      */
@@ -206,6 +214,12 @@ public class Individual
     boolean isSelected()
     {
         return this.pairedWithAnother;
+    }
+    
+    @Override
+    public Individual clone()
+    {
+        return new Individual(this.gene);
     }
     
     @Override

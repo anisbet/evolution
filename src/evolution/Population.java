@@ -175,13 +175,17 @@ public class Population
      */
     void makeBabies()
     {
+        Individual eliteIndividual = this.getEliteIndividual();
+        Individual[] partners      = this.mateSelection.findMates(this, eliteIndividual);
+        Individual[] babies        = this.reproductionMethod.reproduce(partners);
+        this.addReplace(babies, partners);
         while (this.hasUnmatchedPairs())
         {
-            Individual eliteIndividual = this.getEliteIndividual();
-            Individual[] partners      = this.mateSelection.findMates(this, eliteIndividual);
-            Individual baby            = this.reproductionMethod.reproduce(partners);
+            Individual nextIndividual = this.getBestUnPairedIndividual();
+            partners = this.mateSelection.findMates(this, nextIndividual);
+            babies = this.reproductionMethod.reproduce(partners);
+            this.addReplace(babies, partners);
         }
-        this.replaceGeneration();
     }
 
     /**
@@ -220,16 +224,6 @@ public class Population
             }
         }
         return false;
-    }
-
-    /**
-     * Responsible for replacing the current generation with the next.
-     * Takes care of the book keeping, that is, making sure the population count
-     * is constant.
-     */
-    private void replaceGeneration()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**
@@ -275,5 +269,28 @@ public class Population
             }
         }
         return weakestSoFar;
+    }
+
+    /**
+     * The children replace the partners.
+     * @param babies the value of baby
+     * @param partners the partners that the individual replaces.
+     */
+    private void addReplace(Individual[] babies, Individual[] partners)
+    {
+        OuterLoop: for (int i = 0; i < babies.length; i++)
+        {
+            // if the population has any holes where an individual died, replace
+            // those members first.
+            for (int j = 0; j < this.population.length; j++)
+            {
+                if (this.population[j] == null)
+                {
+                    this.population[j] = babies[i];
+                    continue OuterLoop;
+                }
+            }
+            partners[i] = babies[i];
+        }
     }
 }

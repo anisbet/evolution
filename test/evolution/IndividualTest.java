@@ -33,8 +33,9 @@ public class IndividualTest
         Individual mate = new Individual(this.search.length());
         System.out.println(" dad>" + this.i);
         System.out.println(" mom>" + mate);
-        Individual offSpring = this.i.mate(mate, new CrossOver());
-        System.out.println("baby>" + offSpring);
+        Individual[] offSpring = this.i.mate(mate, new CrossOver());
+        System.out.print("baby>" + offSpring[0]);
+        System.out.println("baby>" + offSpring[1]);
     }
 
     /**
