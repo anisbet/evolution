@@ -53,7 +53,10 @@ class DominantPair implements MateSelectionStrategy
             if (mates[0] == null 
                 || (mates[0].getRank() > population.get(i).getRank())) mates[0] = population.get(i);
         }
-        mates[0].setSelected();
+        if (mates[0] != null)
+        {
+            mates[0].setSelected();
+        }
         return mates;
     }
     

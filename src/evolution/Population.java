@@ -210,9 +210,16 @@ public class Population
      * 
      * @return true if all the members of the population have mated, and false otherwise.
      */
-    private boolean hasUnmatchedPairs()
+    boolean hasUnmatchedPairs()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (int i = 0; i < this.population.length; i++)
+        {
+            if (this.population[i] != null && ! this.population[i].isSelected())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -223,5 +230,50 @@ public class Population
     private void replaceGeneration()
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Gets best unpaired individual in population.
+     * @return best, or lowest ranked unpaired individual.
+     */
+    Individual getBestUnPairedIndividual()
+    {
+        Individual bestSoFar = null;
+        for (int i = 0; i < this.population.length; i++)
+        {
+            if (this.population[i] != null)
+            {
+                Individual currentIndividual = this.population[i];
+                if (bestSoFar == null 
+                   || (currentIndividual.getRank() < bestSoFar.getRank() 
+                        && ! currentIndividual.isSelected()))
+                {
+                    bestSoFar = currentIndividual;
+                }
+            }
+        }
+        return bestSoFar;
+    }
+
+    /**
+     * Opposite of {@link Population#getEliteIndividual() } gets weakest individual in population.
+     * @return weakest, or highest ranked individual in the population.
+     */
+    Individual getWeakestIndividual()
+    {
+        Individual weakestSoFar = null;
+        for (int i = 0; i < this.population.length; i++)
+        {
+            if (this.population[i] != null)
+            {
+                Individual currentIndividual = this.population[i];
+                if (weakestSoFar == null 
+                   || currentIndividual.getRank() > weakestSoFar.getRank())
+                {
+                    weakestSoFar = currentIndividual;
+                }
+            }
+        }
+        return weakestSoFar;
     }
 }

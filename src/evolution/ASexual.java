@@ -38,6 +38,7 @@ public class ASexual implements MateSelectionStrategy
     {
         Individual[] mate = new Individual[1];
         mate[0] = individual;
+        mate[0].setSelected();
         return mate;
     }
     

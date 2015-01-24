@@ -36,6 +36,15 @@ public class DominantPairTest
         {
             System.out.println("              mate: " + result[i]);
         }
+        
+        individual = population.getWeakestIndividual();
+        result = mSelection.findMates(population, individual);
+        System.out.println("        population:\n" + population);
+        System.out.println("pair selection for: " + individual);
+        for (int i = 0; i < result.length; i++)
+        {
+            System.out.println("              mate: " + result[i]);
+        }
     }
     
 }

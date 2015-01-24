@@ -41,6 +41,12 @@ public class PopulationTest
         RecombinationStrategy strategy = new CrossOver();
         MateSelectionStrategy mateSelection = new DominantPair();
         this.p = new Population(20, "Hello World!".length(), fitness, strategy, mateSelection);
+        
+        for (int i = 0; i < this.p.size(); i++)
+        {
+            this.p.get(i).setSelected();
+            System.out.println("Are there unmatched pairs? " + i + ")" + this.p.hasUnmatchedPairs());
+        }
     }
 
     /**
