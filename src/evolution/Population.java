@@ -35,7 +35,6 @@ public class Population
 {
     public static int MUTATIONS = 3;
     private Individual[] population;
-    private Individual[] nextGeneration;
     private SecureRandom randomGenerator;
     private RecombinationStrategy reproductionMethod;
     private Fitness fitness;
@@ -50,7 +49,6 @@ public class Population
     )
     {
         this.population         = new Individual[poolSize];
-        this.nextGeneration     = new Individual[poolSize]; // Populated after mating.
         this.randomGenerator    = new SecureRandom();
         this.reproductionMethod = strategy;
         this.fitness            = fitness;

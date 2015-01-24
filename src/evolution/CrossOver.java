@@ -29,7 +29,15 @@ import java.security.SecureRandom;
  * Cross over takes the genes from two individuals and swaps random lengths of alleles
  * with each other to produce a gene that is the same length, but a mixture of 
  * the father and mother's genes). The cross over takes place at a site selected
- * at random and continues to the end of the parent's gene.
+ * at random and continues to the end of the parent's gene. This strategy creates
+ * as many offspring as mates selected. Each of the mates are then replaced in
+ * the next generation. The elite individual then enjoys longevity because they
+ * are not replaced until there is a generation of offspring that have better
+ * genetic characteristics. At that point a new elite member is selected. The
+ * previous elite individual has been marked as having paired, so they will be 
+ * selected as a mate for the new elite, marked as paired and then replaced by
+ * their offspring.
+ * 
  * @author Andrew Nisbet
  */
 public class CrossOver implements RecombinationStrategy

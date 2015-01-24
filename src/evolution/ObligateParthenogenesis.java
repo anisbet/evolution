@@ -41,13 +41,15 @@ package evolution;
  * the egg. This form of asexual reproduction is thought in some cases to be a 
  * serious threat to biodiversity for the subsequent lack of gene variation and 
  * potentially decreased fitness of the offspring.
+ * Reference: http://en.wikipedia.org/wiki/Parthenogenesis (Jan. 24, 2015).
+ * 
  * @author Andrew Nisbet
  */
 public class ObligateParthenogenesis implements RecombinationStrategy
 {
 
     @Override
-    public Individual reproduce(Individual[] mates)
+    public Individual[] reproduce(Individual[] mates)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

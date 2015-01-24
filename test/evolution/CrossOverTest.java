@@ -31,10 +31,11 @@ public class CrossOverTest
         mates[0] = new Individual(10);
         mates[1] = new Individual(10);
         CrossOver instance = new CrossOver();
-        Individual offSpring = instance.reproduce(mates);
+        Individual[] offSpring = instance.reproduce(mates);
         System.out.println("  Dad:'"+mates[0].toString()+"'");
         System.out.println("  Mom:'"+mates[1].toString()+"'");
-        System.out.println("Child:'"+offSpring.toString()+"'");
+        System.out.println("Child:'"+offSpring[0].toString()+"'");
+        System.out.println("Child:'"+offSpring[1].toString()+"'");
     }
     
 }

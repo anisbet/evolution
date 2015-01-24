@@ -34,7 +34,7 @@ public class IndividualTest
         System.out.println(" dad>" + this.i);
         System.out.println(" mom>" + mate);
         Individual[] offSpring = this.i.mate(mate, new CrossOver());
-        System.out.print("baby>" + offSpring[0]);
+        System.out.println("baby>" + offSpring[0]);
         System.out.println("baby>" + offSpring[1]);
     }
 
@@ -52,5 +52,18 @@ public class IndividualTest
         {
             System.out.println(">>" + this.i.mutate(1));
         }
+    }
+    
+    @Test
+    public void testClone()
+    {
+        System.out.println("== clone ==");
+        System.out.print(">>" + this.i);
+        Individual individual = this.i.clone();
+        System.out.println(" >>" + individual);
+        assertNotSame(this.i, individual);
+        this.i.mutate(3);
+        System.out.print(">>" + this.i);
+        System.out.println(" >>" + individual);
     }
 }
