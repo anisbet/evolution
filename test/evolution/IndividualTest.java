@@ -11,59 +11,61 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author andrew
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
 public class IndividualTest
 {
-    private final Individual i;
-    private final String search;
+    
     public IndividualTest()
     {
-        this.search = "hello";
-        this.i = new Individual(this.search.length());
     }
 
     /**
-     * Test of mate method, of class Individual.
+     * Test of getGeneSequence method, of class Individual.
      */
     @Test
-    public void testMate()
+    public void testGetGeneSequence()
     {
-        System.out.println("==mate==");
-        Individual mate = new Individual(this.search.length());
-        System.out.println(" dad>" + this.i);
-        System.out.println(" mom>" + mate);
-        Individual[] offSpring = this.i.mate(mate, new CrossOver());
-        System.out.println("baby>" + offSpring[0]);
-        System.out.println("baby>" + offSpring[1]);
-    }
-
-    /**
-     * Test of mutate method, of class Individual. Because the mutations are 
-     * by their nature random and even include the possibility of no change, this
-     * method does not use assertions.
-     */
-    @Test
-    public void testMutate()
-    {
-        System.out.println("== mutate ==");
-        System.out.println(">>" + this.i.toString());
-        for (int i = 0; i < 5; i++)
+        System.out.println("==getGeneSequence==");
+        Individual instance = new Individual(1, "ABCD");
+        // Since the value will necessarily be random we can't check exact values
+        System.out.println("GENE: '" + new String(instance.getGeneSequence()) + "'");
+        instance = new Individual(1, "A");
+        System.out.println("GENE: '" + new String(instance.getGeneSequence()) + "'");
+        try
         {
-            System.out.println(">>" + this.i.mutate(1));
+            instance = new Individual(0, "A");
+            System.out.println("GENE: '" + new String(instance.getGeneSequence()) + "'");
+            instance = new Individual(1, "");
+            System.out.println("GENE: '" + new String(instance.getGeneSequence()) + "'");
+        }
+        catch (RuntimeException e)
+        {
+            assertTrue(e instanceof IllegalArgumentException);
         }
     }
-    
+
+    /**
+     * Test of setRank method, of class Individual.
+     */
     @Test
-    public void testClone()
+    public void testSetRank()
     {
-        System.out.println("== clone ==");
-        System.out.print(">>" + this.i);
-        Individual individual = this.i.clone();
-        System.out.println(" >>" + individual);
-        assertNotSame(this.i, individual);
-        this.i.mutate(3);
-        System.out.print(">>" + this.i);
-        System.out.println(" >>" + individual);
+        System.out.println("==setRank==");
+        Individual instance = new Individual(1, "A");
+        instance.setRank(99);
+        assertTrue(instance.getRank() == 99);
     }
+
+    /**
+     * Test of toString method, of class Individual.
+     */
+    @Test
+    public void testToString()
+    {
+        System.out.println("==toString==");
+        Individual instance = new Individual(1, "A");        
+        System.out.println(instance.toString());
+    }
+    
 }

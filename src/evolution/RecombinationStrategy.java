@@ -25,30 +25,10 @@
 package evolution;
 
 /**
- * Implementors use strategies to recombine genes. Some suggestions:
- * <ul>
- * <li>Crossing over</li>
- * <li>Conservative site-specific recombination</li>
- * <li>Transpositional recombination</li>
- * </ul>
- * @author Andrew Nisbet
+ *
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
-public interface RecombinationStrategy
+interface RecombinationStrategy
 {
-    /**
-     * The reproduction function.
-     * @param mates - one or more individuals who's genes are to be passed to
-     * the next generation.
-     * @return offspring Individual.
-     */
-    public Individual[] reproduce(Individual[] mates);
-
-    /**
-     * 
-     * @param mates array of potential mates. Each implementor know how many are 
-     * required/permitted for their reproductive strategy.
-     * @return true if the individual found enough mates in the population and
-     * false otherwise.
-     */
-    public boolean foundMates(Individual[] mates);
+    public char[] mitosis(char[] gene1, char[] gene2);
 }

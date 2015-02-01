@@ -1,16 +1,35 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2015 Andrew Nisbet
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package evolution;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
- * @author andrew
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
 public class CrossOverTest
 {
@@ -20,21 +39,17 @@ public class CrossOverTest
     }
 
     /**
-     * Test of reproduce method, of class CrossOver.
+     * Test of mitosis method, of class CrossOver.
      */
     @Test
-    public void testReproduce()
+    public void testMitosis()
     {
-        System.out.println("== reproduce ==");
-        Individual[] mates = new Individual[2];
-        mates[0] = new Individual(10);
-        mates[1] = new Individual(10);
+        System.out.println("==mitosis==");
+        char[] dad = {'a','b'};
+        char[] mom = {'x','y'};
         CrossOver instance = new CrossOver();
-        Individual[] offSpring = instance.reproduce(mates);
-        System.out.println("  Dad:'"+mates[0].toString()+"'");
-        System.out.println("  Mom:'"+mates[1].toString()+"'");
-        System.out.println("Child:'"+offSpring[0].toString()+"'");
-        System.out.println("Child:'"+offSpring[1].toString()+"'");
+        char[] result = instance.mitosis(dad, mom);
+        System.out.println("RESULT: '" + new String(result) + "'");
     }
     
 }

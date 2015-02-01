@@ -27,207 +27,143 @@ package evolution;
 import java.security.SecureRandom;
 
 /**
- * The physical individual that will reproduce with another individual.
- * @author andrew
+ * A single member of a population. This individual will evolve its internal string
+ * towards a target string without knowledge of the contents of the target string.
+ * The individual will be 'born' with a given set of genes that it inherits from
+ * its parents and is judged for its fitness (closeness in match to the target 
+ * string), and its choice of mates is limited by its fitness.
+ * 
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
-public class Individual
+class Individual
 {
-
-    public class Randomizer
-    {
-        private final String alphabet; 
-        private final int N;
-        private SecureRandom r;
-        
-        public Randomizer()
-        {
-            this.alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !@#$%&*";
-            this.N    = alphabet.length();
-            this.r    = new SecureRandom();
-        }
-
-        public void initGeneSequence(char[] gene)
-        {
-            for (int i = 0; i < gene.length; i++) 
-            {
-                gene[i] = alphabet.charAt(r.nextInt(N));
-            }
-        }
-        
-        public void mutate(char[] gene, int mutations)
-        {
-            for (int i = 0; i < mutations; i++)
-            {
-                // Pick a neucleotide somewhere along the gene and flip it.
-                int nextNucleotide = r.nextInt(gene.length);
-                gene[nextNucleotide] = pick(gene[nextNucleotide]);
-            }
-        }
-        
-        // Picks a random flip of either a char higher or lower or no change.
-        private char pick(char c)
-        {
-            int which = r.nextInt(3);
-            int pos = this.alphabet.indexOf(c);
-//            System.out.print("mutation type:" + which);
-            char retChar;
-            switch (which)
-            {
-                case 0:
-                    // pick lower character but check we need to wrap around start and end of string
-                    // if 'c' is the first or last character in the alphabet.
-                    if (pos <= 0)
-                    {
-                        retChar = this.alphabet.charAt(this.alphabet.length() -1);
-                    }
-                    else
-                    {
-                        retChar = this.alphabet.charAt(pos -1);
-                    }
-                    break;
-                case 2:
-                    // increase the character by one.
-                    if (pos >= this.alphabet.length() -1)
-                    {
-                        retChar = this.alphabet.charAt(0);
-                    }
-                    else
-                    {
-                        retChar = this.alphabet.charAt(pos +1);
-                    }
-                    break;
-                default: // 1 selected don't mutate the nucleotide.
-                    retChar = c;
-                    break;
-            }
-//            System.out.println(" changing " + c + " to " + retChar);
-            return retChar;
-        }
-    }
-    
-    private char[] gene;
-    private Randomizer randomizer;
+    private final char[] gene;
     private int rank;
-    private boolean pairedWithAnother;
+    private static RecombinationStrategy STRATEGY = null;
+    private static String possibleAlphabet;
     
-    /**
-     * Creates individual with a pre-defined gene length.
-     * @param geneLength 
-     */
-    public Individual(int geneLength)
+    public static void setGeneticRecombinationStrategy(RecombinationStrategy strategy)
     {
-        if (geneLength < 1)
+        STRATEGY = strategy;
+    }
+
+    /**
+     *
+     * @param geneLength the value of geneLength
+     * @param possibleAlphabet the value of possibleAlphabet
+     */
+    Individual(int geneLength, String possibleAlphabet)
+    {
+        this.possibleAlphabet = possibleAlphabet;
+        if (geneLength < 1 || possibleAlphabet.length() < 1)
         {
-            throw new IllegalArgumentException("Genes must have more than 1 nucleotide.");
+            throw new IllegalArgumentException("Gene length and possible alphabet "
+                    + "must be greater than or equal to one.");
         }
-        this.gene = new char[geneLength];
-        // fill the gene with random nucleotides.
-        this.randomizer = new Randomizer();
-        this.randomizer.initGeneSequence(gene);
-        this.pairedWithAnother = false;
+        this.gene = new char[geneLength]; 
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < gene.length; i++) 
+        {
+            gene[i] = possibleAlphabet.charAt(secureRandom.nextInt(possibleAlphabet.length()));
+        }
     }
     
     /**
-     * Creates an individual with a given gene sequence. Equivalent to a child
-     * being born with the genes passed to it by it's parents.
-     * @param gene 
+     * Constructor to test fitness etc.
+     * @param string - typically the target string to assure fitness = 0.
      */
-    public Individual(char[] gene)
+    Individual(String string)
+    {
+        this.gene = new char[string.length()]; 
+        for (int i = 0; i < gene.length; i++) 
+        {
+            gene[i] = string.charAt(i);
+        }
+    }
+    
+    private Individual(char[] gene)
     {
         this.gene = new char[gene.length];
-        this.randomizer = new Randomizer();
         System.arraycopy(gene, 0, this.gene, 0, gene.length);
-        this.pairedWithAnother = false;
     }
     
-    /**
-     * Returns the fitness of this individual.
-     * @return fitness score within the population.
-     */
-    public int getRank()
+    char[] getGeneSequence()
     {
-        return rank;
+        return this.gene;
     }
 
-    /**
-     * Sets the individual's ranking, or fitness score within the population.
-     * @param rank fitness score
-     */
-    public void setRank(int rank)
+    void setRank(int rank)
     {
         this.rank = rank;
     }
     
-    /** 
-     * Gets the gene sequence.
-     * @return gene sequence of char[].
-     */
-    public char[] getGene()
+    int getRank()
     {
-        return gene;
+        return this.rank;
     }
     
-    /**
-     * Recombines the genes from the argument mate with this individual's.
-     * @param mate 'nuff said.
-     * @param recombinationStrategy how the parents genes are to be recombined.
-     * @return new child individual that features gene sequences from parents.
-     */
-    public Individual[] mate(Individual mate, RecombinationStrategy recombinationStrategy)
+    Individual mate(Individual mate)
     {
-        Individual[] mates = new Individual[2];
-        mates[0] = this;
-        mates[1] = mate;
-        Individual[] babies = recombinationStrategy.reproduce(mates);
-        // if the population has any holes where an individual died, replace
-        // those members first.
-        for (int i = 0; i < babies.length; i++)
+        if (STRATEGY == null)
         {
-            babies[i].mutate(2);
+            throw new IllegalStateException("Strategy unset in Individual.");
         }
-        return babies;
-    }
-    
-    /**
-     * Mutates 'n' alleles at random. Returns a string version of the mutation
-     * with the side effect is the gene is mutated.
-     * @param mutations
-     * @return string version of the individual with ranking.
-     */
-    public String mutate(int mutations)
-    {
-        this.randomizer.mutate(gene, mutations);
-        return this.toString();
-    }
-    
-    /**
-     * This tells the individual that they are paired with another.
-     */
-    void setSelected()
-    {
-        this.pairedWithAnother = true;
-    }
-
-    boolean isSelected()
-    {
-        return this.pairedWithAnother;
-    }
-    
-    @Override
-    public Individual clone()
-    {
-        return new Individual(this.gene);
+        return new Individual(STRATEGY.mitosis(this.gene, mate.gene));
     }
     
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < this.gene.length; i++)
+        return new String(this.gene);
+    }
+
+    void mutate(int mutations)
+    {
+        for (int i = 0; i < mutations; i++)
         {
-            sb.append(this.gene[i]);
+            // Pick a neucleotide somewhere along the gene and flip it.
+            SecureRandom secureRandom = new SecureRandom();
+            int nextNucleotide = secureRandom.nextInt(gene.length);
+            gene[nextNucleotide] = pick(gene[nextNucleotide], secureRandom);
         }
-        sb.append(" => ").append(this.rank);
-        return sb.toString();
+    }
+        // Picks a random flip of either a char higher or lower or no change.
+    private char pick(char c, SecureRandom r)
+    {
+        int which = r.nextInt(3);
+        int pos = this.possibleAlphabet.indexOf(c);
+//            System.out.print("mutation type:" + which);
+        char retChar;
+        switch (which)
+        {
+            case 0:
+                // pick lower character but check we need to wrap around start and end of string
+                // if 'c' is the first or last character in the alphabet.
+                if (pos <= 0)
+                {
+                    retChar = this.possibleAlphabet.charAt(this.possibleAlphabet.length() -1);
+                }
+                else
+                {
+                    retChar = this.possibleAlphabet.charAt(pos -1);
+                }
+                break;
+            case 2:
+                // increase the character by one.
+                if (pos >= this.possibleAlphabet.length() -1)
+                {
+                    retChar = this.possibleAlphabet.charAt(0);
+                }
+                else
+                {
+                    retChar = this.possibleAlphabet.charAt(pos +1);
+                }
+                break;
+            default: // 1 selected don't mutate the nucleotide.
+                retChar = c;
+                break;
+        }
+//        System.out.println(" changing " + c + " to " + retChar);
+        return retChar;
     }
 }

@@ -25,9 +25,9 @@
 package evolution;
 
 /**
- * Evolution is a simulator of how software can represent evolve solutions to 
- * a simple problem: Create the string 'Hello World!".
- * @author andrew Nisbet
+ * Evolution is a workbench to test evolutionary processes. The application evolves
+ * strings into a given target string and displays information about the process.
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
 public class Evolution
 {
@@ -37,28 +37,45 @@ public class Evolution
      */
     public static void main(String[] args)
     {
-        // 
-        String inputString                       = "Hello World!";
-        Fitness fitnessTest                      = new Fitness(inputString);
-        RecombinationStrategy reproductionMethod = new CrossOver();
-        MateSelectionStrategy mateSelection      = new DominantPair();
-        Population population = new Population(
-                20, 
-                inputString.length(), 
-                fitnessTest, 
-                reproductionMethod,
-                mateSelection
-        );
-        System.out.println("Initial population: ");
-        System.out.println(population.toString());
-        int generationCount = 1;
-        Individual nextGenIndividual = population.getEliteIndividual();
-        while (fitnessTest.toString().compareTo(new String(nextGenIndividual.getGene())) != 0)
+        int individualCount = 5; // in future this will come from cmd line options
+        int mutations       = 3;
+        Individual.setGeneticRecombinationStrategy(new CrossOver());
+        Target target = new Target(
+                "Hello World!", 
+                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !@#$%&*");
+        Population population = new Population();
+        for (int i = 0; i < individualCount; i++)
         {
-            System.out.println("generation " + generationCount + " " + nextGenIndividual);
-            nextGenIndividual.mutate(3);
-            population.computeFitness();
+            population.add(new Individual(target.getGeneLength(), target.getPossibleAphabet()));
+        }
+        population.testFitness(target);
+        population.view();
+        int generationCount = 1;
+        while (! population.isOptimal())
+        {
+            Individual elite = population.getEliteIndividual();
+            int eliteIndex = 0;
+            for (int i = 0; i < population.size(); i++)
+            {
+                Individual mate = population.getIndividual(i);
+                if (mate.equals(elite)) 
+                {
+                    eliteIndex = i;
+                    continue;
+                }
+                Individual child = elite.mate(mate);
+                population.replace(i, child);
+            }
+            // Without this the population settles into a local minimum, and
+            // the entire population remains homogeneous.
+            elite.mutate(mutations);
+            population.replace(eliteIndex, elite);
+            population.testFitness(target);
+            System.out.println("Generation: " + generationCount);
+            System.out.println("the elite individual: " + elite);
+            population.view();
             generationCount++;
+//            break;
         }
     }
     

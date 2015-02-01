@@ -21,50 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package evolution;
 
 import java.security.SecureRandom;
 
 /**
- * Cross over takes the genes from two individuals and swaps random lengths of alleles
- * with each other to produce a gene that is the same length, but a mixture of 
- * the father and mother's genes). The cross over takes place at a site selected
- * at random and continues to the end of the parent's gene. This strategy creates
- * as many offspring as mates selected. Each of the mates are then replaced in
- * the next generation. The elite individual then enjoys longevity because they
- * are not replaced until there is a generation of offspring that have better
- * genetic characteristics. At that point a new elite member is selected. The
- * previous elite individual has been marked as having paired, so they will be 
- * selected as a mate for the new elite, marked as paired and then replaced by
- * their offspring.
- * 
- * @author Andrew Nisbet
+ *
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
 public class CrossOver implements RecombinationStrategy
-{   
+{
 
     @Override
-    public Individual[] reproduce(Individual[] mates)
+    public char[] mitosis(char[] dad, char[] mom)
     {
-        if (mates.length < 2)
+        int length = dad.length;
+        char[] myNewGeneSequence = new char[length];
+        SecureRandom sRandom = new SecureRandom();
+        // Returns a pseudorandom, uniformly distributed int value between 0 
+        // (inclusive) and the specified value (exclusive), drawn from this 
+        // random number generator's sequence.
+        int site = sRandom.nextInt(length);
+        // Randomly select who's gene's get copied first.
+        int who  = sRandom.nextInt(2);
+        for (int i = 0; i < length; i++)
         {
-            throw new IllegalArgumentException("cross over recombination requires a 2 mates.");
-        }
-        Individual[] babies = new Individual[mates.length];
-        for (int j = 0; j < babies.length; j++)
-        {
-            char[] dad = mates[0].getGene();
-            char[] mom = mates[1].getGene();
-            int length = dad.length;
-            char[] myNewGeneSequence = new char[length];
-            SecureRandom sRandom = new SecureRandom();
-            // Returns a pseudorandom, uniformly distributed int value between 0 
-            // (inclusive) and the specified value (exclusive), drawn from this 
-            // random number generator's sequence.
-            int site = sRandom.nextInt(length);
-            for (int i = 0; i < length; i++)
+            if (i <= site)
             {
-                if (i <= site)
+                if (who == 0)
                 {
                     myNewGeneSequence[i] = mom[i];
                 }
@@ -73,15 +58,18 @@ public class CrossOver implements RecombinationStrategy
                     myNewGeneSequence[i] = dad[i];
                 }
             }
-            babies[j] = new Individual(myNewGeneSequence);
+            else // Cross over and add dad's genes from here on.
+            {
+                if (who == 0)
+                {
+                    myNewGeneSequence[i] = dad[i];
+                }
+                else
+                {
+                    myNewGeneSequence[i] = mom[i];
+                }
+            }
         }
-        return babies;
+        return myNewGeneSequence;
     }
-
-    @Override
-    public boolean foundMates(Individual[] mates)
-    {
-        return mates.length > 1;
-    }
-    
 }

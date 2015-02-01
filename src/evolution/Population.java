@@ -24,266 +24,82 @@
 
 package evolution;
 
-import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The object is the Gene Pool, or the population. Within it are individuals each
- * of which is tested for fitness against the target string.
- * @author andrandomGeneratorew
+ * This acts as a container class for a population of individuals and contains 
+ * convenience methods.
+ * 
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
-public class Population
+class Population
 {
-    public final static int MUTATIONS = 3;
-    private final Individual[] population;
-    private final SecureRandom randomGenerator;
-    private final RecombinationStrategy reproductionMethod;
-    private final Fitness fitness;
-    private final MateSelectionStrategy mateSelection;
-    
-    public Population(
-            int poolSize, 
-            int geneLength, 
-            Fitness fitness, 
-            RecombinationStrategy strategy,
-            MateSelectionStrategy mateSelection
-    )
+    private List<Individual> population = new ArrayList();
+
+    void add(Individual individual)
     {
-        this.population         = new Individual[poolSize];
-        this.randomGenerator    = new SecureRandom();
-        this.reproductionMethod = strategy;
-        this.fitness            = fitness;
-        this.mateSelection      = mateSelection;
-        for (int i = 0; i < poolSize; i++)
-        {
-            this.population[i] = new Individual(geneLength);
-            this.population[i].setRank(fitness.testFitness(this.population[i].getGene()));
-        }
-    }
-    
-    /**
-     * Gets the Individual from the population.
-     * @param position
-     * @return Individual selected.
-     */
-    public Individual get(int position)
-    {
-        if (position < 0)
-        {
-            return this.population[0];
-        }
-        else if (position >= this.population.length)
-        {
-            return this.population[this.population.length -1];
-        }
-        else
-        {
-            return this.population[position];
-        }
-    }
-    
-    /**
-     * Culls individuals frandomGeneratorom the herandomGeneratord at randomGeneratorandom. 
-     * Actually the method randomGeneratoremoves the memberandomGenerators and 
-     * randomGeneratoreplaces them with offsprandomGeneratoring of the 
-     * randomGeneratoremaining population thrandomGeneratorough an elitist 
-     * algorandomGeneratorithm, one that favourandomGenerators higherandomGenerator 
-     * randomGeneratoranking individuals. 
-     * 
-     * The method may randomGeneratorandomly 
-     * cull the suprandomGeneratoreme candidate howeverandomGenerator. This has the
-     * effect of randomGeneratoremoving a possibly local maximum of genetic superandomGeneratoriorandomGeneratority.
-     * @param count - the number of members of the population to cull.
-     */
-    public void cull(int count)
-    {
-        // prevent index array out of range if user selects too many or too few indiviuals
-        if (count < 1 || count > this.population.length)
-        {
-            return;
-        }
-        int[] whichOnes = new int[count];
-        for (int i = 0; i < count; i++)
-        {
-            whichOnes[i] = this.randomGenerator.nextInt(this.population.length);
-            if (this.population[whichOnes[i]] != null)
-            {
-                this.population[whichOnes[i]] = null; // remove the member.
-            }
-        }
-    }
-    
-    /**
-     * Computes the fitness of each member of the population.
-     */
-    public void computeFitness()
-    {
-        for (Individual individual : this.population)
-        {
-            individual.setRank(this.fitness.testFitness(individual.getGene()));
-        }
-    }
-    
-    public int size()
-    {
-        return this.population.length;
-    }
-    
-    @Override
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < population.length; i++)
-        {
-            sb.append(i).append(") ").append(this.population[i].toString()).append("\n");
-        }
-        return sb.toString();
+        this.population.add(individual);
     }
 
-    /**
-     * Determines if the goal of the evolutionary experiment is reached.
-     * @return true if one member of the population evolved the solution string
-     * and therefore has a rank of '0' - a perfect match, and false otherwise.
-     */
-    public boolean isOptimal()
+    void testFitness(Target target)
     {
-        for (Individual population1 : this.population)
+        for (Individual i : this.population)
         {
-            if (population1.getRank() < 1)
-            {
-                return true;
-            }
+            i.setRank(target.testFitness(i.getGeneSequence()));
+        }
+    }
+    
+    void view()
+    {
+        for (Individual i : this.population)
+        {
+            System.out.println(i + " : " + i.getRank());
+        }
+    }
+
+    boolean isOptimal()
+    {
+        for (Individual i : this.population)
+        {
+            if (i.getRank() == 0) return true;
         }
         return false;
     }
 
-    /**
-     * Arranges a barn dance where elite pairs meet and mate to produce the next 
-     * generation.
-     */
-    void makeBabies()
+    Iterable<Individual> getIterator()
     {
-        while (this.hasUnmatchedPairs())
-        {
-            Individual nextIndividual = this.getBestUnPairedIndividual();
-            Individual[] partners = this.mateSelection.findMates(this, nextIndividual);
-            if (this.reproductionMethod.foundMates(partners))
-            {
-                Individual[] babies = this.reproductionMethod.reproduce(partners);
-                this.addReplace(babies, partners);
-            }
-            else
-            {
-                nextIndividual.mutate(MUTATIONS);
-            }
-        }
+        return this.population;
     }
 
-    /**
-     * 
-     * @return the populations lowest ranked individual.
-     */
     Individual getEliteIndividual()
     {
-        Individual bestSoFar = null;
-        for (Individual population1 : this.population)
+        int lowestRank = 99999999;
+        int indexLowestRankedIndividual = 0;
+        for (int i = 0; i < this.population.size(); i++)
         {
-            Individual currentIndividual = population1;
-            if (bestSoFar == null
-                    || currentIndividual.getRank() < bestSoFar.getRank())
+            if (this.population.get(i).getRank() < lowestRank)
             {
-                bestSoFar = currentIndividual;
+                lowestRank = this.population.get(i).getRank();
+                indexLowestRankedIndividual = i;
             }
         }
-        return bestSoFar;
+        return this.population.get(indexLowestRankedIndividual);
     }
 
-    /**
-     * 
-     * @return true if all the members of the population have mated, and false otherwise.
-     */
-    boolean hasUnmatchedPairs()
+    void replace(int i, Individual child)
     {
-        for (Individual population1 : this.population)
-        {
-            if (!population1.isSelected())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Gets best unpaired individual in population.
-     * @return best, or lowest ranked unpaired individual.
-     */
-    Individual getBestUnPairedIndividual()
-    {
-        Individual bestSoFar = null;
-        for (Individual population1 : this.population)
-        {
-            Individual currentIndividual = population1;
-            if (bestSoFar == null
-                    || (currentIndividual.getRank() < bestSoFar.getRank() 
-                    && ! currentIndividual.isSelected()))
-            {
-                bestSoFar = currentIndividual;
-            }
-        }
-        return bestSoFar;
+        this.population.remove(i);
+        this.population.add(i, child);
     }
 
-    /**
-     * Opposite of {@link Population#getEliteIndividual() } gets weakest individual in population.
-     * @return weakest, or highest ranked individual in the population.
-     */
-    Individual getWeakestIndividual()
+    int size()
     {
-        Individual weakestSoFar = null;
-        for (Individual population1 : this.population)
-        {
-            Individual currentIndividual = population1;
-            if (weakestSoFar == null
-                    || currentIndividual.getRank() > weakestSoFar.getRank())
-            {
-                weakestSoFar = currentIndividual;
-            }
-        }
-        return weakestSoFar;
+        return this.population.size();
     }
 
-    /**
-     * The children replace the partners.
-     * @param babies the value of baby
-     * @param partners the partners that the individual replaces.
-     */
-    private void addReplace(Individual[] babies, Individual[] partners)
+    Individual getIndividual(int i)
     {
-        OuterLoop: for (int i = 0; i < babies.length; i++)
-        {
-            // if the population has any holes where an individual died, replace
-            // those members first.
-            for (int j = 0; j < this.population.length; j++)
-            {
-                if (this.population[j] == null)
-                {
-                    this.population[j] = babies[i];
-                    continue OuterLoop;
-                }
-            }
-            partners[i] = babies[i];
-        }
-    }
-
-    void replace(Individual weakest, Individual nextGenIndividual)
-    {
-        for (int i = 0; i < this.population.length; i++)
-        {
-            if (this.population[i].equals(weakest))
-            {
-                this.population[i] = nextGenIndividual.clone();
-                return;
-            }
-        }
+        return this.population.get(i);
     }
 }

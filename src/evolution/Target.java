@@ -25,19 +25,29 @@
 package evolution;
 
 /**
- * This class tests the fitness of the resultant strings.
- * @author andrew
+ * This class contains the target string that all individuals strive to evolve towards.
+ * This class also includes methods to test the fitness of individuals.
+ * @author Andrew Nisbet <anisbet@epl.ca>
  */
-public class Fitness
+class Target
 {
-    private final String target;
+
     
-    public Fitness(String finalResult)
+    private String target;
+    private String possibleAlphabet;
+    
+    Target(String target, String possibleAlphabet)
     {
-        this.target = finalResult;
+        this.target = target;
+        this.possibleAlphabet = possibleAlphabet;
+    }
+
+    int getGeneLength()
+    {
+        return this.target.length();
     }
     
-    public int testFitness(char[] gene)
+    int testFitness(char[] gene)
     {
         // paranoid checking
         if (gene.length != this.target.length())
@@ -53,12 +63,12 @@ public class Fitness
             // To excentuate the difference we compute the square of the differences in the sequence.
             fitness += Math.pow((double)((int)gene[i] - (int)this.target.charAt(i)), 2.0);
         }
-        return (int)fitness; // TODO finish this.
+        return (int)fitness;
     }
     
-    @Override
-    public String toString()
+    String getPossibleAphabet()
     {
-        return this.target;
+        return this.possibleAlphabet;
     }
+    
 }
