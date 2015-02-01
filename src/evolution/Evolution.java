@@ -64,6 +64,7 @@ public class Evolution
                     continue;
                 }
                 Individual child = elite.mate(mate);
+                child.mutate(mutations);
                 population.replace(i, child);
             }
             // Without this the population settles into a local minimum, and
