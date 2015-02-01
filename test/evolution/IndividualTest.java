@@ -15,8 +15,8 @@ import static org.junit.Assert.*;
  */
 public class IndividualTest
 {
-    private Individual i;
-    private String search;
+    private final Individual i;
+    private final String search;
     public IndividualTest()
     {
         this.search = "hello";

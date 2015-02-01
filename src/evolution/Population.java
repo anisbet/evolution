@@ -33,12 +33,12 @@ import java.security.SecureRandom;
  */
 public class Population
 {
-    public static int MUTATIONS = 3;
-    private Individual[] population;
-    private SecureRandom randomGenerator;
-    private RecombinationStrategy reproductionMethod;
-    private Fitness fitness;
-    private MateSelectionStrategy mateSelection;
+    public final static int MUTATIONS = 3;
+    private final Individual[] population;
+    private final SecureRandom randomGenerator;
+    private final RecombinationStrategy reproductionMethod;
+    private final Fitness fitness;
+    private final MateSelectionStrategy mateSelection;
     
     public Population(
             int poolSize, 
@@ -117,13 +117,9 @@ public class Population
      */
     public void computeFitness()
     {
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual individual : this.population)
         {
-            Individual individual = this.population[i];
-            if (individual != null)
-            {
-                individual.setRank(this.fitness.testFitness(individual.getGene()));
-            }
+            individual.setRank(this.fitness.testFitness(individual.getGene()));
         }
     }
     
@@ -138,14 +134,7 @@ public class Population
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < population.length; i++)
         {
-            if (this.population[i] != null)
-            {
-                sb.append(i).append(") ").append(this.population[i].toString()).append("\n");
-            }
-            else
-            {
-                sb.append(i).append(") ").append("<null>").append("\n");
-            }
+            sb.append(i).append(") ").append(this.population[i].toString()).append("\n");
         }
         return sb.toString();
     }
@@ -157,9 +146,9 @@ public class Population
      */
     public boolean isOptimal()
     {
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual population1 : this.population)
         {
-            if (this.population[i] != null && this.population[i].getRank() < 1)
+            if (population1.getRank() < 1)
             {
                 return true;
             }
@@ -173,16 +162,19 @@ public class Population
      */
     void makeBabies()
     {
-        Individual eliteIndividual = this.getEliteIndividual();
-        Individual[] partners      = this.mateSelection.findMates(this, eliteIndividual);
-        Individual[] babies        = this.reproductionMethod.reproduce(partners);
-        this.addReplace(babies, partners);
         while (this.hasUnmatchedPairs())
         {
             Individual nextIndividual = this.getBestUnPairedIndividual();
-            partners = this.mateSelection.findMates(this, nextIndividual);
-            babies = this.reproductionMethod.reproduce(partners);
-            this.addReplace(babies, partners);
+            Individual[] partners = this.mateSelection.findMates(this, nextIndividual);
+            if (this.reproductionMethod.foundMates(partners))
+            {
+                Individual[] babies = this.reproductionMethod.reproduce(partners);
+                this.addReplace(babies, partners);
+            }
+            else
+            {
+                nextIndividual.mutate(MUTATIONS);
+            }
         }
     }
 
@@ -193,16 +185,13 @@ public class Population
     Individual getEliteIndividual()
     {
         Individual bestSoFar = null;
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual population1 : this.population)
         {
-            if (this.population[i] != null)
+            Individual currentIndividual = population1;
+            if (bestSoFar == null
+                    || currentIndividual.getRank() < bestSoFar.getRank())
             {
-                Individual currentIndividual = this.population[i];
-                if (bestSoFar == null 
-                   || currentIndividual.getRank() < bestSoFar.getRank())
-                {
-                    bestSoFar = currentIndividual;
-                }
+                bestSoFar = currentIndividual;
             }
         }
         return bestSoFar;
@@ -214,9 +203,9 @@ public class Population
      */
     boolean hasUnmatchedPairs()
     {
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual population1 : this.population)
         {
-            if (this.population[i] != null && ! this.population[i].isSelected())
+            if (!population1.isSelected())
             {
                 return true;
             }
@@ -231,17 +220,14 @@ public class Population
     Individual getBestUnPairedIndividual()
     {
         Individual bestSoFar = null;
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual population1 : this.population)
         {
-            if (this.population[i] != null)
+            Individual currentIndividual = population1;
+            if (bestSoFar == null
+                    || (currentIndividual.getRank() < bestSoFar.getRank() 
+                    && ! currentIndividual.isSelected()))
             {
-                Individual currentIndividual = this.population[i];
-                if (bestSoFar == null 
-                   || (currentIndividual.getRank() < bestSoFar.getRank() 
-                        && ! currentIndividual.isSelected()))
-                {
-                    bestSoFar = currentIndividual;
-                }
+                bestSoFar = currentIndividual;
             }
         }
         return bestSoFar;
@@ -254,16 +240,13 @@ public class Population
     Individual getWeakestIndividual()
     {
         Individual weakestSoFar = null;
-        for (int i = 0; i < this.population.length; i++)
+        for (Individual population1 : this.population)
         {
-            if (this.population[i] != null)
+            Individual currentIndividual = population1;
+            if (weakestSoFar == null
+                    || currentIndividual.getRank() > weakestSoFar.getRank())
             {
-                Individual currentIndividual = this.population[i];
-                if (weakestSoFar == null 
-                   || currentIndividual.getRank() > weakestSoFar.getRank())
-                {
-                    weakestSoFar = currentIndividual;
-                }
+                weakestSoFar = currentIndividual;
             }
         }
         return weakestSoFar;
@@ -289,6 +272,18 @@ public class Population
                 }
             }
             partners[i] = babies[i];
+        }
+    }
+
+    void replace(Individual weakest, Individual nextGenIndividual)
+    {
+        for (int i = 0; i < this.population.length; i++)
+        {
+            if (this.population[i].equals(weakest))
+            {
+                this.population[i] = nextGenIndividual.clone();
+                return;
+            }
         }
     }
 }

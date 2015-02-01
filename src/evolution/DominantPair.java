@@ -44,8 +44,8 @@ class DominantPair implements MateSelectionStrategy
         for (int i = 0; i < population.size(); i++)
         {
             // Find a mate that has as close to your ranking (or higher).
-            if (population.get(i).equals(individual)) continue; // don't mate with yourself (ew).
             if (population.get(i) == null || population.get(i).isSelected()) continue; // can't select a dead partner. We are monogomous.
+            if (population.get(i).equals(individual)) continue; // don't mate with yourself (ew).
             if (population.get(i).getRank() < individual.getRank()) continue; // this candidate is out of your league.
             // So now we are left with candidates that are not myself and are 
             // not of lower ranking than me so now I need to find the best candidate

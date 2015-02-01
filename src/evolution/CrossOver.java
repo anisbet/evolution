@@ -77,5 +77,11 @@ public class CrossOver implements RecombinationStrategy
         }
         return babies;
     }
+
+    @Override
+    public boolean foundMates(Individual[] mates)
+    {
+        return mates.length > 1;
+    }
     
 }

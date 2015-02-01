@@ -32,7 +32,7 @@ import java.security.SecureRandom;
  */
 public class Individual
 {
-    
+
     public class Randomizer
     {
         private final String alphabet; 
@@ -136,10 +136,7 @@ public class Individual
     {
         this.gene = new char[gene.length];
         this.randomizer = new Randomizer();
-        for (int i = 0; i < gene.length; i++)
-        {
-            this.gene[i] = gene[i];
-        }
+        System.arraycopy(gene, 0, this.gene, 0, gene.length);
         this.pairedWithAnother = false;
     }
     

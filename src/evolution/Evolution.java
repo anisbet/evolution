@@ -52,13 +52,14 @@ public class Evolution
         System.out.println("Initial population: ");
         System.out.println(population.toString());
         int generationCount = 1;
-        while (! population.isOptimal())
+        Individual nextGenIndividual = population.getEliteIndividual();
+        while (fitnessTest.toString().compareTo(new String(nextGenIndividual.getGene())) != 0)
         {
-            System.out.println("generation " + generationCount + " " + population.getEliteIndividual());
-            population.makeBabies();
+            System.out.println("generation " + generationCount + " " + nextGenIndividual);
+            nextGenIndividual.mutate(3);
+            population.computeFitness();
             generationCount++;
         }
-        System.out.println("generation " + generationCount + " " + population.getEliteIndividual());
     }
     
 }

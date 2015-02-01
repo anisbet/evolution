@@ -51,6 +51,18 @@ public class ObligateParthenogenesis implements RecombinationStrategy
     @Override
     public Individual[] reproduce(Individual[] mates)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Individual[] babies = new Individual[mates.length];
+        for (int i = 0; i < mates.length; i++)
+        {
+            mates[i].mutate(2);
+            babies[i] = mates[i];
+        }
+        return babies;
+    }
+
+    @Override
+    public boolean foundMates(Individual[] mates)
+    {
+        return mates.length == 1;
     }
 }

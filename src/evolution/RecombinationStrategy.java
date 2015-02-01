@@ -42,4 +42,13 @@ public interface RecombinationStrategy
      * @return offspring Individual.
      */
     public Individual[] reproduce(Individual[] mates);
+
+    /**
+     * 
+     * @param mates array of potential mates. Each implementor know how many are 
+     * required/permitted for their reproductive strategy.
+     * @return true if the individual found enough mates in the population and
+     * false otherwise.
+     */
+    public boolean foundMates(Individual[] mates);
 }
